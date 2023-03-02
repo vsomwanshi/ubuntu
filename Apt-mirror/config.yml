@@ -1,0 +1,10 @@
+---
+- name: Configure apt Mirror
+  hosts: apt
+  become: true
+
+  tasks:
+  - block:
+    - name: Configure apt Mirror
+      include_role:
+        name: apt-mirror

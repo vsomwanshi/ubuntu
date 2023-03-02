@@ -1,0 +1,34 @@
+---
+- name: Create volume group for yum mirror data
+  lvg:
+    vg: "{{ mirror_vg_name }}"
+    pvs: "{{ mirror_pv_disk }}"
+
+- name: Create logical volume for yum mirror data
+  lvol:
+    lv: "{{ mirror_lv_name }}"
+    vg: "{{ mirror_vg_name }}"
+    size: "+100%FREE"
+    resizefs: true
+
+- name: Creating filesystem for yum mirror data
+  filesystem:
+    dev: "/dev/{{ mirror_vg_name }}/{{ mirror_lv_name }}"
+    fstype: "{{ mirror_fs_type }}"
+
+- name: Creating directory for yum mirror filesystem mount point
+  file:
+    path: "{{ mirror_base_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+
+- name: Mounting yum mirror filesystem
+  mount:
+    boot: true
+    fstype: "{{ mirror_fs_type }}"
+    opts: "nodev,noexec,nosuid,noatime"
+    path: "{{ mirror_base_dir }}"
+    src: "/dev/{{ mirror_vg_name }}/{{ mirror_lv_name }}"
+    state: mounted

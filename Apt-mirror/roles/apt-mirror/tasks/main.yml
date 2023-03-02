@@ -1,0 +1,9 @@
+---
+- name: Set Up Apt Mirror Filesystem
+  include_tasks: setup_share.yml
+
+- name: Configure Apt Mirror
+  include_tasks: configure_mirror.yml
+
+- name: Sync Apt Repos
+  include_tasks: sync_repos.yml

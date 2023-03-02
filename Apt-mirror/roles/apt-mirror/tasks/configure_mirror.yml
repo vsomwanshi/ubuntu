@@ -1,0 +1,40 @@
+---
+- name: install apache2
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+
+- name: start and enable apache service
+  command: systemctl start apache2 && systemctl enable apache2
+
+- name: create directory under /share
+  ansible.builtin.file:
+    path: "{{ mirror_base_dir/ubuntu}}"
+    state: directory
+    owner: www-data
+    group: www-data
+
+- name: install apt-mirror
+  ansible.builtin.apt:
+    name: apt-mirror
+    state: present
+
+- name: update system to latest version
+  command: apt update -y
+
+#- name: upgrade the system
+#  shell: apt upgrade -y
+
+- name: take the backup of existing mirror.list file
+  command: cp -rp /etc/apt/mirror.list /etc/apt/mirror.list.bak
+
+- name: copy mirror.list to destination server
+  copy:
+    src: mirror.list
+    dest: /etc/apt/mirror.list
+    owner: root
+    group: root
+    mode:  0644
+
+- name: create symbolink link
+  command: ln -s /share /var/www/html/share

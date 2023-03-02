@@ -1,0 +1,36 @@
+---
+- name: install tmux
+  ansible.builtin.apt:
+    name: tmux
+    state: present
+
+- name: install rsync
+  ansible.builtin.apt:
+    name: rsync
+    state: present
+
+- name: create tmux session
+  command: tmux new -s repo_sync
+
+- name: backup existing apt-mirror file
+  command: cp -rp /usr/bin/apt-mirror /usr/bin/apt-mirror_original
+
+- name: copy apt-mirror to destination server
+  copy:
+    src: apt-mirror
+    dest: /usr/bin/apt-mirror
+    owner: root
+    group: root
+    mode:  0755
+
+- name: schedule crontab to sync repository
+  ansible.builtin.cron:
+    minute: "00"
+    hour: "01"
+    job: "/usr/bin/apt-mirror"
+
+- name: create tmux session for syncing Repos
+  command: tmux new -s repo_sync
+
+- name: sync repository
+  command: apt-mirror

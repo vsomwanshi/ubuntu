@@ -1,0 +1,6 @@
+mirror_base_dir: '/share'
+mirror_fs_type:  'xfs'
+mirror_pv_disk:  '/dev/sdb'
+mirror_vg_name:  'apt'
+mirror_lv_name:  'mirror'
+y10k_base_dir:   '/usr/local'
