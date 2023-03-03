@@ -5,14 +5,17 @@
     state: present
 
 - name: start and enable apache service
-  command: systemctl start apache2 && systemctl enable apache2
+  service:
+    name: apache2
+    state: started
+    enabled: yes
 
-- name: create directory under /share
+- name: set the permission and ownership on /share
   ansible.builtin.file:
-    path: "{{ mirror_base_dir/ubuntu}}"
-    state: directory
+    path: "{{ mirror_base_dir }}"
     owner: www-data
     group: www-data
+    mode: '0755'
 
 - name: install apt-mirror
   ansible.builtin.apt:

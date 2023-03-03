@@ -23,6 +23,11 @@
     group: root
     mode:  0755
 
+- name: install crontab
+  ansible.builtin.apt:
+    name: cron
+    state: present
+
 - name: schedule crontab to sync repository
   ansible.builtin.cron:
     minute: "00"
@@ -30,7 +35,7 @@
     job: "/usr/bin/apt-mirror"
 
 - name: create tmux session for syncing Repos
-  command: tmux new -s repo_sync
+  command: tmux new -d -s sync_repos
 
 - name: sync repository
-  command: apt-mirror
+  command: tmux send-keys -t sync_repos "apt-mirror" ENTER
